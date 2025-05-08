@@ -123,6 +123,8 @@ char *format_output(const char *in) {
 		ret[len - 1] = 0;
 	}
 
+	printf("ret=%s\n", ret);
+
 	return ret;
 }
 
