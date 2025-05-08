@@ -120,7 +120,7 @@ char *format_output(const char *in) {
 	// strip last newline
 	len = strlen(ret);
 	if (ret || len > 0) {
-		ret[len] = 0;
+		ret[len - 1] = 0;
 	}
 
 	return ret;
