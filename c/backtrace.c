@@ -116,6 +116,13 @@ char *format_output(const char *in) {
 		free(temp);
 		line = eol ? eol + 1 : NULL;
 	}
+
+	// strip last newline
+	len = strlen(ret);
+	if (ret || len > 0) {
+		ret[len] = 0;
+	}
+
 	return ret;
 }
 
