@@ -117,6 +117,7 @@ char *format_output(const char *in) {
 		line = eol ? eol + 1 : NULL;
 	}
 
+	printf("format out = %s\n", ret);
 	return ret;
 }
 
@@ -127,6 +128,7 @@ char *gen_backtrace(void **bt_entries, int size) {
 
 	snprintf(command, sizeof(command),
 		 "atos -fullPath -o %s -l 0x100000000 ", get_binary_path());
+	printf("running atos %s\n", command);
 	for (int i = 0; i < size; i++) {
 		char address[256];
 		Dl_info info;
