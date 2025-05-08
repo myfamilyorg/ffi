@@ -1,5 +1,9 @@
 #![no_std]
 
+pub fn ffi_fn() -> i32 {
+    10
+}
+
 extern "C" {
     // memory allocation
     pub fn alloc(bytes: usize) -> *const u8;
