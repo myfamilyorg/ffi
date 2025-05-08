@@ -1,9 +1,5 @@
 #![no_std]
 
-pub fn ffi_fn() -> i32 {
-    13
-}
-
 extern "C" {
     // memory allocation
     pub fn alloc(bytes: usize) -> *const u8;
@@ -39,8 +35,4 @@ extern "C" {
     pub fn mkdir(path: *const u8, mode: i32) -> i32;
     pub fn rmdir(path: *const u8) -> i32;
     pub fn unlink(path: *const u8) -> i32;
-}
-
-pub fn real_main(_argc: i32, _argv: *const *const i8) -> i32 {
-    0
 }
