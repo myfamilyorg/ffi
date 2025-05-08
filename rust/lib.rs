@@ -1,7 +1,7 @@
 #![no_std]
 
 pub fn ffi_fn() -> i32 {
-    12
+    13
 }
 
 extern "C" {
