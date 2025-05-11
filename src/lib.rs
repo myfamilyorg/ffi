@@ -36,3 +36,17 @@ extern "C" {
     pub fn rmdir(path: *const u8) -> i32;
     pub fn unlink(path: *const u8) -> i32;
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_ffi() {
+        let x = unsafe { alloc(1) };
+        assert_eq!(1, 1);
+        unsafe {
+            release(x);
+        }
+    }
+}
