@@ -7,68 +7,6 @@
 #include <sys/stat.h>
 #include <types.h>
 
-#define CHECK_AND_SET_ERRORS()          \
-	if (errno == EFAULT)            \
-		err = ERR_EFAULT;       \
-	else if (errno == EIO)          \
-		err = ERR_EIO;          \
-	else if (errno == ENOSYS)       \
-		err = ERR_ENOSYS;       \
-	else if (errno == EACCES)       \
-		err = ERR_EACCES;       \
-	else if (errno == EAGAIN)       \
-		err = ERR_EAGAIN;       \
-	else if (errno == EBADF)        \
-		err = ERR_EBADF;        \
-	else if (errno == EWOULDBLOCK)  \
-		err = ERR_EWOULDBLOCK;  \
-	else if (errno == EINVAL)       \
-		err = ERR_EINVAL;       \
-	else if (errno == EROFS)        \
-		err = ERR_EROFS;        \
-	else if (errno == ENODEV)       \
-		err = ERR_ENODEV;       \
-	else if (errno == ENOMEM)       \
-		err = ERR_ENOMEM;       \
-	else if (errno == EOVERFLOW)    \
-		err = ERR_EOVERFLOW;    \
-	else if (errno == EPERM)        \
-		err = ERR_EPERM;        \
-	else if (errno == ETXTBSY)      \
-		err = ERR_ETXTBSY;      \
-	else if (errno == EBUSY)        \
-		err = ERR_EBUSY;        \
-	else if (errno == EDQUOT)       \
-		err = ERR_EDQUOT;       \
-	else if (errno == EEXIST)       \
-		err = ERR_EEXIST;       \
-	else if (errno == EFBIG)        \
-		err = ERR_EFBIG;        \
-	else if (errno == EINTR)        \
-		err = ERR_EINTR;        \
-	else if (errno == EISDIR)       \
-		err = ERR_EISDIR;       \
-	else if (errno == ELOOP)        \
-		err = ERR_ELOOP;        \
-	else if (errno == EMFILE)       \
-		err = ERR_EMFILE;       \
-	else if (errno == ENAMETOOLONG) \
-		err = ERR_ENAMETOOLONG; \
-	else if (errno == ENFILE)       \
-		err = ERR_ENFILE;       \
-	else if (errno == EOPNOTSUPP)   \
-		err = ERR_EOPNOTSUPP;   \
-	else if (errno == ENOENT)       \
-		err = ERR_ENOENT;       \
-	else if (errno == ENOSPC)       \
-		err = ERR_ENOSPC;       \
-	else if (errno == ENOTDIR)      \
-		err = ERR_ENOTDIR;      \
-	else if (errno == ENXIO)        \
-		err = ERR_ENXIO;        \
-	else                            \
-		err == ERR_UNKNOWN;
-
 int getentropy(void *buf, size_t length);
 int ftruncate(int fd, size_t length);
 int close(int fd);
