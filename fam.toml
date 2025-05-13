@@ -1,3 +1,4 @@
 [crate]
-	bin = "sys"
+	lib = "sys"
 [deps]
+	types = { git = "https://github.com/myfamilyorg/types" }

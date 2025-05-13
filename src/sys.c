@@ -1,38 +1,112 @@
+#include <errno.h>
+#include <fcntl.h>
+#include <sys.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
 #include <types.h>
 
-// for timespec/CLOCK_REALTIME structures
-#include <time.h>
-void *malloc(size_t);
-void *realloc(void *ptr, size_t);
-void free(void *);
-int getentropy(void *buf, size_t length);
+void *map(size_t pages) {
+	if (pages == 0) return NULL;
 
-void *alloc(size_t size) {
-	void *ptr = malloc(size);
-	return ptr;
-}
+	size_t size = pages * PAGE_SIZE;
+	if (size / PAGE_SIZE != pages) {
+		errno = ENOMEM;
+		return NULL;
+	}
 
-void release(void *ptr) { free(ptr); }
-
-void *resize(void *ptr, size_t len) {
-	void *ret = realloc(ptr, len);
+	void *ret = mmap(NULL, pages * PAGE_SIZE, PROT_READ | PROT_WRITE,
+			 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	if (ret == MAP_FAILED) return NULL;
 	return ret;
 }
 
-uint64_t getmicros() {
-	struct timespec now;
-	clock_gettime(CLOCK_REALTIME, &now);
-	return (uint64_t)((__int128_t)now.tv_sec * 1000000) +
-	       (uint64_t)(now.tv_nsec / 1000);
+int mapsync(void *addr, size_t pages, bool async) {
+	if (addr == NULL || pages == 0) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	size_t page_size = getpagesize();
+	size_t size = pages * page_size;
+	if (size / page_size != pages) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	int flags = async ? MS_ASYNC : MS_SYNC;
+	return msync(addr, size, flags);
 }
 
-int sleep_millis(uint64_t millis) {
-	struct timespec ts;
-	ts.tv_sec = millis / 1000;
-	ts.tv_nsec = (millis % 1000) * 1000000;
-	int ret = nanosleep(&ts, 0);
+int openfd(const char *path, int flags) {
+	return open(path, flags, S_IRUSR | S_IWUSR);
+}
+
+size_t fsize(int fd) {
+	struct stat buf;
+	if (fstat(fd, &buf)) return -1;
+	return buf.st_size;
+}
+
+void *fimpl(int fd, size_t offset, size_t pages, bool write) {
+	if (pages == 0) {
+		return NULL;
+	}
+
+	long page_size = PAGE_SIZE;
+	if (page_size == -1) {
+		return NULL;
+	}
+
+	size_t size = pages * page_size;
+	if (size / page_size != pages) {
+		errno = EINVAL;
+		return NULL;
+	}
+
+	if (offset % page_size != 0) {
+		errno = EINVAL;
+		return NULL;
+	}
+
+	if (fd < 0) {
+		errno = EBADF;
+		return NULL;
+	}
+
+	void *ret;
+	if (write)
+		ret = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd,
+			   offset);
+	else
+		ret = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, offset);
+	if (ret == MAP_FAILED) {
+		return NULL;
+	}
+
 	return ret;
 }
 
-int rand_bytes(byte *buf, size_t length) { return getentropy(buf, length); }
+void *fmap(int fd, size_t offset, size_t pages) {
+	return fimpl(fd, offset, pages, true);
+}
 
+void *fview(int fd, size_t offset, size_t pages) {
+	return fimpl(fd, offset, pages, false);
+}
+
+int unmap(void *addr, size_t pages) {
+	if (addr == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
+	if (pages == 0) return 0;
+
+	size_t size = pages * PAGE_SIZE;
+	if (size / PAGE_SIZE != pages) {
+		errno = EINVAL;
+		return -1;
+	}
+	return munmap(addr, size);
+}
+
+int sys(int argc, char **argv) { return 0; }
