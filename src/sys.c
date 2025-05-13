@@ -2,6 +2,7 @@
 #include <error.h>
 #include <signal.h>
 #include <sys.h>
+#include <sys/fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <types.h>
@@ -69,7 +70,6 @@
 		err == ERR_UNKNOWN;
 
 int getentropy(void *buf, size_t length);
-int open(const char *path, int flags, int mode);
 int ftruncate(int fd, size_t length);
 int close(int fd);
 
@@ -123,7 +123,16 @@ int mapsync(void *addr, size_t pages, bool async) {
 }
 
 int openfd(const char *path, int flags) {
-	int fd = open(path, flags, S_IRUSR | S_IWUSR);
+	int cflags = 0;
+	if ((flags & OPEN_RDWR) == OPEN_RDWR)
+		cflags = O_RDWR;
+	else if ((flags & OPEN_RDONLY) == OPEN_RDONLY)
+		cflags = O_RDONLY;
+	else if ((flags & OPEN_WRONLY) == OPEN_WRONLY)
+		cflags = O_WRONLY;
+	if (flags & OPEN_CREATE) cflags |= O_CREAT;
+
+	int fd = open(path, cflags, S_IRUSR | S_IWUSR);
 	if (fd < 0) {
 		CHECK_AND_SET_ERRORS()
 		return err;

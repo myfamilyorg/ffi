@@ -3,6 +3,11 @@
 
 #include <types.h>
 
+#define OPEN_RDONLY 0x1
+#define OPEN_WRONLY (0x1 << 1)
+#define OPEN_RDWR (OPEN_RDONLY | OPEN_WRONLY)
+#define OPEN_CREATE (0x1 << 2)
+
 #define PAGE_SIZE (getpagesize())
 
 int getpagesize();
