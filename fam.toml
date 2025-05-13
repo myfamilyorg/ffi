@@ -1,4 +1,5 @@
 [crate]
 	lib = "sys"
 [deps]
+        error = { git = "https://github.com/myfamilyorg/error" }
 	types = { git = "https://github.com/myfamilyorg/types" }
