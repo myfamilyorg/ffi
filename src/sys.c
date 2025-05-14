@@ -149,7 +149,7 @@ void *fmap(int fd, size_t offset, size_t pages) {
 	return fimpl(fd, offset, pages, true);
 }
 
-void *fview(int fd, size_t offset, size_t pages) {
+const void *fview(int fd, size_t offset, size_t pages) {
 	return fimpl(fd, offset, pages, false);
 }
 
